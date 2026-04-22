@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Hint Trap is a mobile-friendly browser puzzle game about tricky literal clues, hidden answers, and Braindom-style misdirection.">
+  <meta name="theme-color" content="#10162f">
+  <meta name="color-scheme" content="dark">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Hint Trap">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <title>Hint Trap</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="hero panel">
+      <div>
+        <p class="eyebrow">Braindom-Style Browser Puzzle Game</p>
+        <h1>Hint Trap</h1>
+        <p class="lede">
+          Every stage gives you a clue that looks simple, then twists the meaning on the page.
+          Read literally, drag words out of the sentence, search the scene, and stop trusting the obvious answer.
+        </p>
+      </div>
+
+      <div class="hero-chips">
+        <button id="stage-chip" class="hero-chip" type="button">1 / 26</button>
+        <span id="tag-chip" class="hero-chip accent">Screen Trick</span>
+        <span id="progress-chip" class="hero-chip">0 Solved</span>
+      </div>
+    </header>
+
+    <section class="layout">
+      <section class="panel stage-panel">
+        <div class="stage-head">
+          <div>
+            <p class="eyebrow">Current Stage</p>
+            <h2 id="stage-title">Scale Lie</h2>
+            <p id="stage-subtitle" class="stage-subtitle"></p>
+          </div>
+
+          <div class="stage-metrics">
+            <div class="metric-card">
+              <span class="metric-label">Attempts</span>
+              <strong id="attempt-count">0</strong>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label">Hints Used</span>
+              <strong id="hint-count">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <section class="prompt-card">
+          <div class="prompt-row">
+            <div>
+              <p class="eyebrow">Hint On The Page</p>
+              <p id="prompt-text" class="prompt-text"></p>
+            </div>
+            <div class="prompt-note">
+              <span id="mechanic-chip" class="mini-chip">Literal Reading</span>
+            </div>
+          </div>
+
+          <div id="hint-box" class="hint-box" hidden>
+            <p class="eyebrow">Extra Hint</p>
+            <p id="hint-text" class="hint-text"></p>
+          </div>
+        </section>
+
+        <section class="board-wrap">
+          <div id="board" class="board" data-theme="screen"></div>
+        </section>
+
+        <div class="action-row">
+          <button id="hint-button" class="action-button secondary" type="button">Reveal Hint</button>
+          <button id="retry-button" class="action-button" type="button">Retry Stage</button>
+          <button id="next-button" class="action-button strong" type="button" disabled>Next Stage</button>
+        </div>
+
+        <p id="feedback" class="feedback" aria-live="polite">
+          The trick is always on the page somewhere.
+        </p>
+      </section>
+
+      <aside class="sidebar">
+        <section class="panel progress-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Progress Wall</p>
+              <h3>Unlocked Stages</h3>
+            </div>
+            <p id="stage-summary" class="panel-copy">Stage 1 of 26</p>
+          </div>
+
+          <div id="stage-grid" class="stage-grid"></div>
+        </section>
+
+        <section class="panel notes-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Pattern Notes</p>
+              <h3>How These Tricks Work</h3>
+            </div>
+          </div>
+
+          <ul class="pattern-list">
+            <li>Some prompts care about screen position or on-screen size, not real-world facts.</li>
+            <li>Some levels make the correct answer a word inside the prompt, not an object in the scene.</li>
+            <li>Some scenes hide the real answer under a movable cover or inside costume details.</li>
+            <li>Some puzzles only work if you hold, drag, or think about the page as an object.</li>
+          </ul>
+        </section>
+
+        <section class="panel complete-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Run Total</p>
+              <h3>Completed Tricks</h3>
+            </div>
+          </div>
+
+          <p id="complete-copy" class="complete-copy">
+            Solve stages to unlock the full collection.
+          </p>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <script src="levels.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
