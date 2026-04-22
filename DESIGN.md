@@ -174,7 +174,9 @@ Helper functions in `levels.js` keep level data compact:
 
 The engine supports board-item images without removing the old emoji/text fallback. When `item.image` is present, `script.js` renders an `<img>` before the board text. If `item.image` is missing, the item renders the existing `icon` span.
 
-Current starter assets live in `assets/images/items/` as SVG files. They cover the first small art pass for animals, prompt-key objects, fruit, the cactus sunlight scene, and the hidden phone scene.
+Current starter assets live in `assets/images/items/` as SVG and PNG files. The first generated raster pass covers Stage 1's animal puzzle, while the SVG pack still covers prompt-key objects, fruit, the cactus sunlight scene, and the hidden phone scene.
+
+Generated source sheets that should be kept for future recropping or comparison live in `assets/images/generated/`.
 
 Recommended workflow for future generated assets:
 

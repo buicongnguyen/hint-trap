@@ -56,6 +56,16 @@ assets/images/items/
 
 The current renderer keeps text labels on every image-enabled item, so puzzles remain readable even if an image fails to load. Future generated PNG or WebP files can be added to the same folder and referenced from level data.
 
+The first generated art pass is wired into Stage 1:
+
+```text
+assets/images/items/elephant-generated.png
+assets/images/items/lion-generated.png
+assets/images/items/mouse-generated.png
+```
+
+The original generated sheet is kept for reference in `assets/images/generated/hint-trap-animals-sheet.png`.
+
 ## Add More Levels
 
 Add new stages in `levels.js`. The engine in `script.js` should only change when adding a brand-new mechanic. See `DESIGN.md` for the full level data contract.

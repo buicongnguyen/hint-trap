@@ -72,9 +72,9 @@
       success: "Right. The mouse is biggest on this screen.",
       wrong: "This stage measures size on the page, not in nature.",
       items: [
-        card("elephant", "🐘", "Elephant", 8, 40, 26, 18, itemImage("elephant", "Elephant", { tone: "gold" })),
-        card("lion", "🦁", "Lion", 18, 72, 18, 14, itemImage("lion", "Lion", { tone: "coral" })),
-        card("mouse", "🐭", "Mouse", 66, 18, 22, 24, itemImage("mouse", "Mouse", { tone: "violet" }))
+        card("elephant", "🐘", "Elephant", 8, 40, 26, 18, itemImage("elephant-generated.png", "Elephant", { tone: "gold" })),
+        card("lion", "🦁", "Lion", 18, 72, 18, 14, itemImage("lion-generated.png", "Lion", { tone: "coral" })),
+        card("mouse", "🐭", "Mouse", 66, 18, 22, 24, itemImage("mouse-generated.png", "Mouse", { tone: "violet" }))
       ]
     },
     {
