@@ -48,7 +48,7 @@ The game is designed to run on mobile browsers:
 
 ## Safety Controls
 
-Players can use `Skip Level` to move past a buggy stage without counting it as solved. After revealing a hint, players can also use `Use Hint Pass` to mark the current stage solved and continue.
+Players can use `Skip Level` to move past a buggy stage without counting it as solved. If the final stage is skipped, it stays open and is marked for later review. After revealing a hint, players can also use `Use Hint Pass` to mark the current stage solved and continue.
 
 ## Image Assets
 

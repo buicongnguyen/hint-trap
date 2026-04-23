@@ -687,9 +687,21 @@
       wrong: "Compare the silhouette details, not the person labels.",
       items: [
         card("backpack-kid", "🎒", "Kid", 12, 24, 20, 22, { tone: "gold", interactive: false }),
-        card("plain-shadow", "◼", "Shadow", 40, 24, 16, 22, { tone: "ink" }),
-        card("backpack-shadow", "◼", "Shadow", 60, 22, 20, 24, { tone: "ink" }),
-        card("hat-shadow", "◼", "Shadow", 82, 30, 14, 20, { tone: "ink" })
+        card("plain-shadow", "▮", "", 40, 24, 16, 22, {
+          tone: "ink",
+          fontSize: "2.3rem",
+          ariaLabel: "Plain shadow"
+        }),
+        card("backpack-shadow", "▮▌", "", 60, 22, 20, 24, {
+          tone: "ink",
+          fontSize: "2.3rem",
+          ariaLabel: "Shadow with backpack bump"
+        }),
+        card("hat-shadow", "▴▮", "", 82, 30, 14, 20, {
+          tone: "ink",
+          fontSize: "2.1rem",
+          ariaLabel: "Shadow with hat"
+        })
       ]
     }
   ];

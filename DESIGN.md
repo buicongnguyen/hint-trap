@@ -47,7 +47,7 @@ When a larger level pack is released, progress loading recomputes the unlocked f
 
 Bug-safety controls:
 
-- `Skip Level`: unlocks the next stage without marking the current stage solved. Skipped stages stay available in the progress wall for later fixing or replay.
+- `Skip Level`: unlocks the next stage without marking the current stage solved. On the final stage, it marks the stage skipped for review without changing the current stage. Skipped stages stay available in the progress wall for later fixing or replay.
 - `Use Hint Pass`: becomes available after revealing the hint, marks the stage solved, and unlocks the next stage.
 
 ## Architecture

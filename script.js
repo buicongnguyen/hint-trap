@@ -64,12 +64,8 @@ function loadProgress() {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     const parsed = raw ? JSON.parse(raw) : {};
-    const solvedIds = Array.isArray(parsed.solvedIds)
-      ? parsed.solvedIds.filter((id) => stages.some((stage) => stage.id === id))
-      : [];
-    const skippedIds = Array.isArray(parsed.skippedIds)
-      ? parsed.skippedIds.filter((id) => stages.some((stage) => stage.id === id) && !solvedIds.includes(id))
-      : [];
+    const solvedIds = getValidStageIds(parsed.solvedIds);
+    const skippedIds = getValidStageIds(parsed.skippedIds, solvedIds);
     let contiguousSolvedCount = 0;
     while (
       contiguousSolvedCount < stages.length &&
@@ -79,7 +75,8 @@ function loadProgress() {
     }
 
     const progressUnlocked = Math.min(stages.length, contiguousSolvedCount + 1);
-    const highestUnlocked = clamp(Math.max(parsed.highestUnlocked || 1, progressUnlocked), 1, stages.length);
+    const savedUnlocked = toFiniteNumber(parsed.highestUnlocked, 1);
+    const highestUnlocked = clamp(Math.max(savedUnlocked, progressUnlocked), 1, stages.length);
 
     return {
       solvedIds,
@@ -93,6 +90,37 @@ function loadProgress() {
       highestUnlocked: 1
     };
   }
+}
+
+function getValidStageIds(ids, excludedIds = []) {
+  if (!Array.isArray(ids)) {
+    return [];
+  }
+
+  const validIds = new Set(stages.map((stage) => stage.id));
+  const excluded = new Set(excludedIds);
+  const seen = new Set();
+
+  return ids.filter((id) => {
+    if (typeof id !== "string" || excluded.has(id) || seen.has(id) || !validIds.has(id)) {
+      return false;
+    }
+
+    seen.add(id);
+    return true;
+  });
+}
+
+function toFiniteNumber(value, fallback) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+}
+
+function unlockThrough(stageNumber) {
+  progress.highestUnlocked = Math.max(
+    toFiniteNumber(progress.highestUnlocked, 1),
+    Math.min(stages.length, stageNumber)
+  );
 }
 
 function saveProgress() {
@@ -158,7 +186,7 @@ function renderStage() {
           stages.length - solvedCount
         } still waiting for you.${skippedCount ? ` ${skippedCount} skipped for later review.` : ""}`;
   refs.hintPassButton.disabled = stageState.solved || !stageState.hintShown;
-  refs.skipButton.disabled = stageState.solved || stageState.index === stages.length - 1;
+  refs.skipButton.disabled = stageState.solved;
   refs.nextButton.disabled = !stageState.solved || stageState.index === stages.length - 1;
 
   if (!stageState.solved && !refs.feedback.textContent) {
@@ -539,7 +567,7 @@ function solveStage(message) {
 
   progress.skippedIds = progress.skippedIds.filter((id) => id !== stage.id);
 
-  progress.highestUnlocked = Math.max(progress.highestUnlocked, Math.min(stages.length, stageState.index + 2));
+  unlockThrough(stageState.index + 2);
   saveProgress();
   renderStage();
 }
@@ -547,7 +575,7 @@ function solveStage(message) {
 function skipStage() {
   const stage = getStage();
 
-  if (stageState.solved || stageState.index >= stages.length - 1) {
+  if (stageState.solved) {
     return;
   }
 
@@ -555,8 +583,16 @@ function skipStage() {
     progress.skippedIds = [...progress.skippedIds, stage.id];
   }
 
-  progress.highestUnlocked = Math.max(progress.highestUnlocked, Math.min(stages.length, stageState.index + 2));
+  unlockThrough(stageState.index + 2);
   saveProgress();
+
+  if (stageState.index >= stages.length - 1) {
+    renderStage();
+    refs.feedback.textContent =
+      "Final level marked skipped for review. You can still use a hint pass or retry it later.";
+    return;
+  }
+
   goToStage(stageState.index + 1);
   refs.feedback.textContent = "Level skipped for now. You can return from the progress wall after it is fixed.";
 }
