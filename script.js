@@ -19,6 +19,8 @@ const refs = {
   hintText: document.getElementById("hint-text"),
   board: document.getElementById("board"),
   hintButton: document.getElementById("hint-button"),
+  hintPassButton: document.getElementById("hint-pass-button"),
+  skipButton: document.getElementById("skip-button"),
   retryButton: document.getElementById("retry-button"),
   nextButton: document.getElementById("next-button"),
   feedback: document.getElementById("feedback"),
@@ -34,6 +36,8 @@ let shakeTimer = null;
 let holdState = null;
 
 refs.hintButton.addEventListener("click", revealHint);
+refs.hintPassButton.addEventListener("click", useHintPass);
+refs.skipButton.addEventListener("click", skipStage);
 refs.retryButton.addEventListener("click", resetStage);
 refs.nextButton.addEventListener("click", goToNextStage);
 refs.stageChip.addEventListener("click", handleMetaTap);
@@ -63,15 +67,29 @@ function loadProgress() {
     const solvedIds = Array.isArray(parsed.solvedIds)
       ? parsed.solvedIds.filter((id) => stages.some((stage) => stage.id === id))
       : [];
-    const highestUnlocked = clamp(parsed.highestUnlocked || 1, 1, stages.length);
+    const skippedIds = Array.isArray(parsed.skippedIds)
+      ? parsed.skippedIds.filter((id) => stages.some((stage) => stage.id === id) && !solvedIds.includes(id))
+      : [];
+    let contiguousSolvedCount = 0;
+    while (
+      contiguousSolvedCount < stages.length &&
+      solvedIds.includes(stages[contiguousSolvedCount].id)
+    ) {
+      contiguousSolvedCount += 1;
+    }
+
+    const progressUnlocked = Math.min(stages.length, contiguousSolvedCount + 1);
+    const highestUnlocked = clamp(Math.max(parsed.highestUnlocked || 1, progressUnlocked), 1, stages.length);
 
     return {
       solvedIds,
+      skippedIds,
       highestUnlocked
     };
   } catch (error) {
     return {
       solvedIds: [],
+      skippedIds: [],
       highestUnlocked: 1
     };
   }
@@ -91,8 +109,12 @@ function goToStage(index) {
 
   const safeIndex = clamp(index, 0, stages.length - 1);
   const unlockedIndex = progress.highestUnlocked - 1;
-  stageState = createStageState(Math.min(safeIndex, unlockedIndex));
-  refs.feedback.textContent = "The trick is always on the page somewhere.";
+  const targetIndex = Math.min(safeIndex, unlockedIndex);
+  stageState = createStageState(targetIndex);
+  stageState.solved = progress.solvedIds.includes(stages[targetIndex].id);
+  refs.feedback.textContent = stageState.solved
+    ? "Stage already solved. Use retry if you want to replay the trick."
+    : "The trick is always on the page somewhere.";
   renderStage();
 }
 
@@ -112,10 +134,13 @@ function getStage() {
 function renderStage() {
   const stage = getStage();
   const solvedCount = progress.solvedIds.length;
+  const skippedCount = progress.skippedIds.length;
 
   refs.stageChip.textContent = `${stageState.index + 1} / ${stages.length}`;
   refs.tagChip.textContent = stage.tag;
-  refs.progressChip.textContent = `${solvedCount} Solved`;
+  refs.progressChip.textContent = skippedCount
+    ? `${solvedCount} Solved • ${skippedCount} Skipped`
+    : `${solvedCount} Solved`;
   refs.stageTitle.textContent = stage.title;
   refs.stageSubtitle.textContent = stage.subtitle;
   refs.attemptCount.textContent = String(stageState.attempts);
@@ -131,7 +156,9 @@ function renderStage() {
       ? `All ${stages.length} stages solved. Every trick in the set is open.`
       : `${solvedCount} of ${stages.length} stages cleared. ${
           stages.length - solvedCount
-        } still waiting for you.`;
+        } still waiting for you.${skippedCount ? ` ${skippedCount} skipped for later review.` : ""}`;
+  refs.hintPassButton.disabled = stageState.solved || !stageState.hintShown;
+  refs.skipButton.disabled = stageState.solved || stageState.index === stages.length - 1;
   refs.nextButton.disabled = !stageState.solved || stageState.index === stages.length - 1;
 
   if (!stageState.solved && !refs.feedback.textContent) {
@@ -164,6 +191,7 @@ function renderStageGrid() {
     button.dataset.index = String(index);
     button.classList.toggle("is-current", index === stageState.index);
     button.classList.toggle("is-complete", progress.solvedIds.includes(stage.id));
+    button.classList.toggle("is-skipped", progress.skippedIds.includes(stage.id));
     button.classList.toggle("is-locked", index >= progress.highestUnlocked);
     button.disabled = index >= progress.highestUnlocked;
     button.addEventListener("click", () => goToStage(index));
@@ -236,6 +264,10 @@ function renderBoard() {
 
     if (item.imageSize) {
       element.style.setProperty("--image-size", item.imageSize);
+    }
+
+    if (item.flipX) {
+      element.style.setProperty("--flip-x", "-1");
     }
 
     const offset = stageState.itemOffsets[item.id];
@@ -449,6 +481,11 @@ function handleMetaTap() {
 }
 
 function revealHint() {
+  if (stageState.solved) {
+    refs.feedback.textContent = "This stage is already solved.";
+    return;
+  }
+
   if (stageState.hintShown) {
     refs.feedback.textContent = "Hint already open.";
     return;
@@ -458,7 +495,21 @@ function revealHint() {
   stageState.hintCount = 1;
   refs.hintBox.hidden = false;
   refs.hintCount.textContent = "1";
+  refs.hintPassButton.disabled = false;
   refs.feedback.textContent = "Hint revealed. The page just got a little less stubborn.";
+}
+
+function useHintPass() {
+  if (stageState.solved) {
+    return;
+  }
+
+  if (!stageState.hintShown) {
+    revealHint();
+    return;
+  }
+
+  solveStage(`Hint pass used. ${getStage().success}`);
 }
 
 function registerAttempt() {
@@ -486,9 +537,28 @@ function solveStage(message) {
     progress.solvedIds = [...progress.solvedIds, stage.id];
   }
 
+  progress.skippedIds = progress.skippedIds.filter((id) => id !== stage.id);
+
   progress.highestUnlocked = Math.max(progress.highestUnlocked, Math.min(stages.length, stageState.index + 2));
   saveProgress();
   renderStage();
+}
+
+function skipStage() {
+  const stage = getStage();
+
+  if (stageState.solved || stageState.index >= stages.length - 1) {
+    return;
+  }
+
+  if (!progress.solvedIds.includes(stage.id) && !progress.skippedIds.includes(stage.id)) {
+    progress.skippedIds = [...progress.skippedIds, stage.id];
+  }
+
+  progress.highestUnlocked = Math.max(progress.highestUnlocked, Math.min(stages.length, stageState.index + 2));
+  saveProgress();
+  goToStage(stageState.index + 1);
+  refs.feedback.textContent = "Level skipped for now. You can return from the progress wall after it is fixed.";
 }
 
 function goToNextStage() {

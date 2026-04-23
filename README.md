@@ -46,6 +46,10 @@ The game is designed to run on mobile browsers:
 - Drag and hold interactions use pointer events, so they work with mouse, touch, and pen input.
 - `site.webmanifest` and `favicon.svg` make the game friendlier when saved to a mobile home screen.
 
+## Safety Controls
+
+Players can use `Skip Level` to move past a buggy stage without counting it as solved. After revealing a hint, players can also use `Use Hint Pass` to mark the current stage solved and continue.
+
 ## Image Assets
 
 Board items can now use project-local images through the optional `image` field in `levels.js`. The first starter pack lives in:

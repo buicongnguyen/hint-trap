@@ -326,6 +326,7 @@ h1 {
 .board-item {
   --drag-x: 0px;
   --drag-y: 0px;
+  --flip-x: 1;
   --item-scale: 1;
   --image-size: min(70%, 86px);
   appearance: none;
@@ -335,7 +336,7 @@ h1 {
   top: 0;
   width: 14%;
   height: 14%;
-  transform: translate(var(--drag-x), var(--drag-y)) scale(var(--item-scale));
+  transform: translate(var(--drag-x), var(--drag-y)) scaleX(var(--flip-x)) scale(var(--item-scale));
   transform-origin: center center;
   display: flex;
   flex-direction: column;
@@ -562,6 +563,18 @@ h1 {
     rgba(255, 255, 255, 0.03);
 }
 
+.action-button.help {
+  background:
+    linear-gradient(180deg, rgba(183, 243, 108, 0.16), rgba(183, 243, 108, 0.04)),
+    rgba(255, 255, 255, 0.03);
+}
+
+.action-button.warning {
+  background:
+    linear-gradient(180deg, rgba(255, 123, 115, 0.16), rgba(255, 123, 115, 0.04)),
+    rgba(255, 255, 255, 0.03);
+}
+
 .action-button.strong {
   background:
     linear-gradient(180deg, rgba(104, 216, 255, 0.2), rgba(104, 216, 255, 0.06)),
@@ -621,6 +634,11 @@ h1 {
 .stage-dot.is-current {
   background: rgba(104, 216, 255, 0.18);
   border-color: rgba(104, 216, 255, 0.42);
+}
+
+.stage-dot.is-skipped:not(.is-complete) {
+  background: rgba(255, 203, 107, 0.18);
+  border-color: rgba(255, 203, 107, 0.44);
 }
 
 .stage-dot.is-locked {
@@ -839,7 +857,7 @@ h1 {
   }
 
   .action-button {
-    flex: 1 1 calc(33.333% - 8px);
+    flex: 1 1 calc(50% - 8px);
     min-height: 46px;
     padding: 0 8px;
     border-radius: 14px;

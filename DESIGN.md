@@ -2,7 +2,7 @@
 
 ## Status
 
-Hint Trap is implemented as an original browser puzzle game inspired by Braindom-style misdirection. The playable build currently has 26 stages, a reusable engine, local progress saving, and level data separated from runtime code.
+Hint Trap is implemented as an original browser puzzle game inspired by Braindom-style misdirection. The playable build currently has 31 stages, a reusable engine, local progress saving, and level data separated from runtime code.
 
 The key implementation decision is that normal expansion happens in `levels.js`, not `script.js`. New puzzles should be authored as data unless they need a completely new interaction mechanic.
 
@@ -41,7 +41,14 @@ Every stage follows the same loop:
 5. Get immediate right or wrong feedback.
 6. Unlock the next stage after solving.
 
-The player can use a hint once per stage. Attempts and hints are shown in the HUD, while solved stage ids and the highest unlocked stage are persisted in local storage.
+The player can use a hint once per stage. After revealing a hint, the player can spend the hint to pass the stage. Attempts and hints are shown in the HUD, while solved stage ids, skipped stage ids, and the highest unlocked stage are persisted in local storage.
+
+When a larger level pack is released, progress loading recomputes the unlocked frontier from the contiguous solved stage ids. This keeps returning players moving into newly appended stages instead of trapping them behind an older `highestUnlocked` value.
+
+Bug-safety controls:
+
+- `Skip Level`: unlocks the next stage without marking the current stage solved. Skipped stages stay available in the progress wall for later fixing or replay.
+- `Use Hint Pass`: becomes available after revealing the hint, marks the stage solved, and unlocks the next stage.
 
 ## Architecture
 
@@ -147,6 +154,7 @@ Common item fields:
 - `imageAlt`: Human-readable image description used as a fallback label source.
 - `ariaLabel`: Optional accessible name override for unusual board items.
 - `imageSize`: Optional CSS size override for unusually large or wide images.
+- `flipX`: Optional horizontal flip used for mirrored-symbol tricks.
 - `text`: Visible label.
 - `shape`: Visual type such as `card`, `pill`, `circle`, `choice`, `zone`, `text`, or `cover`.
 - `tone`: Color tone such as `slate`, `sun`, `leaf`, `sky`, `rose`, or similar CSS-supported token.
@@ -251,7 +259,7 @@ Start-Process .\index.html
 Expected data validation output for the current build:
 
 ```text
-26 levels, 26 unique ids
+31 levels, 31 unique ids
 ```
 
 ## QA Checklist
@@ -268,7 +276,7 @@ Before considering a new level ready:
 
 ## Current Stage Coverage
 
-The 26-stage build covers these puzzle families:
+The 31-stage build covers these puzzle families:
 
 - Screen-position tricks.
 - On-screen size tricks.
@@ -280,5 +288,8 @@ The 26-stage build covers these puzzle families:
 - Multi-select hunts.
 - Hold-to-grow interaction.
 - Meta UI tapping.
+- Hint-pass and skip safety controls.
+- Mirrored-symbol visual tricks.
+- Prompt-word counting tricks.
 
 This gives the game enough variety for an initial prototype while keeping the codebase ready for a larger level pack.

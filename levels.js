@@ -590,6 +590,107 @@
         }),
         card("right-step", "🥈", "Second", 70, 50, 18, 18, { tone: "slate" })
       ]
+    },
+    {
+      id: "count-page-wheels",
+      title: "Question Counts",
+      subtitle: "The page includes more than the drawings.",
+      tag: "Count Trick",
+      mechanic: "Count the prompt",
+      theme: "count",
+      promptHtml: "How many wheels are on this page?",
+      hint: "Count the word in the question too.",
+      solution: { kind: "tap", target: "seven-wheels" },
+      success: "Right. Six drawn wheels plus the word wheels makes seven.",
+      wrong: "Do not stop counting at the board art.",
+      items: [
+        card("car-wheels", "🚗", "4 wheels", 10, 22, 24, 18, { tone: "cyan" }),
+        card("bike-wheels", "🚲", "2 wheels", 58, 22, 24, 18, { tone: "lime" }),
+        choice("six-wheels", "6", 16, 62, 16, 14, { tone: "slate" }),
+        choice("seven-wheels", "7", 42, 62, 16, 14, { tone: "gold" }),
+        choice("eight-wheels", "8", 68, 62, 16, 14, { tone: "slate" })
+      ]
+    },
+    {
+      id: "backward-seven",
+      title: "Wrong Direction",
+      subtitle: "The right number is the one facing the wrong way.",
+      tag: "Visual Trick",
+      mechanic: "Mirrored symbol",
+      theme: "screen",
+      promptHtml: "Tap the wrong 7.",
+      hint: "One 7 is physically backwards.",
+      solution: { kind: "tap", target: "flipped-seven" },
+      success: "Correct. That 7 is wrong because it is mirrored.",
+      wrong: "Look for the direction of the symbol, not its value.",
+      items: [
+        choice("plain-seven-a", "7", 18, 32, 18, 18, { tone: "slate", fontSize: "2.4rem" }),
+        choice("flipped-seven", "7", 42, 26, 20, 22, {
+          tone: "coral",
+          flipX: true,
+          fontSize: "2.8rem"
+        }),
+        choice("plain-seven-b", "7", 70, 38, 18, 18, { tone: "slate", fontSize: "2.4rem" })
+      ]
+    },
+    {
+      id: "cold-word",
+      title: "Cold Read",
+      subtitle: "Sometimes the adjective is the target.",
+      tag: "Prompt Word",
+      mechanic: "Tap the word",
+      theme: "word",
+      promptHtml: `Tap the ${tapWord("cold")} one.`,
+      hint: "The coldest thing is the word itself.",
+      solution: { kind: "promptTap", word: "cold" },
+      success: "Exactly. The word cold was the target.",
+      wrong: "This is a prompt-word puzzle, not a freezer inspection.",
+      items: [
+        card("fridge", "🧊", "Fridge", 12, 34, 22, 20, { tone: "cyan" }),
+        card("snowman", "☃️", "Snowman", 40, 52, 22, 20, { tone: "slate" }),
+        card("ice-cream", "🍦", "Ice Cream", 70, 30, 20, 20, { tone: "violet" })
+      ]
+    },
+    {
+      id: "poison-bin",
+      title: "Danger Word",
+      subtitle: "The toxic thing is not in the bottles.",
+      tag: "Prompt Drag",
+      mechanic: "Drag from the clue",
+      theme: "word",
+      promptHtml: `Throw away the ${dragWord("poison")}.`,
+      hint: "Drag the dangerous word into the bin.",
+      solution: { kind: "dragPromptWord", word: "poison", target: "trash-bin" },
+      success: "Safe. The word poison is in the trash.",
+      wrong: "The prompt word is what needs throwing away.",
+      items: [
+        card("green-bottle", "🧪", "Bottle", 14, 28, 18, 20, { tone: "lime" }),
+        card("blue-bottle", "🧴", "Bottle", 38, 38, 18, 20, { tone: "cyan" }),
+        zone("trash-bin", "Trash", 66, 34, 22, 26, {
+          shape: "card",
+          tone: "ink",
+          acceptWord: "poison"
+        })
+      ]
+    },
+    {
+      id: "shadow-backpack",
+      title: "Shadow Detail",
+      subtitle: "A silhouette can carry clues too.",
+      tag: "Visual Match",
+      mechanic: "Tap matching shadow",
+      theme: "hidden",
+      promptHtml: "Tap the shadow that belongs to the backpack kid.",
+      hint: "Only one shadow has a backpack bump.",
+      solution: { kind: "tap", target: "backpack-shadow" },
+      success: "Right. The backpack shape gives it away.",
+      wrong: "Compare the silhouette details, not the person labels.",
+      items: [
+        card("backpack-kid", "🎒", "Kid", 12, 24, 20, 22, { tone: "gold", interactive: false }),
+        card("plain-shadow", "◼", "Shadow", 40, 24, 16, 22, { tone: "ink" }),
+        card("backpack-shadow", "◼", "Shadow", 60, 22, 20, 24, { tone: "ink" }),
+        card("hat-shadow", "◼", "Shadow", 82, 30, 14, 20, { tone: "ink" })
+      ]
     }
   ];
 })();
